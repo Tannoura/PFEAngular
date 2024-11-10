@@ -1,0 +1,378 @@
+<html>
+
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+		<script src="https://unpkg.com/unlazy@0.11.3/dist/unlazy.with-hashing.iife.js" defer init></script>
+		<script type="text/javascript">
+			window.tailwind.config = {
+				darkMode: ['class'],
+				theme: {
+					extend: {
+						colors: {
+							border: 'hsl(var(--border))',
+							input: 'hsl(var(--input))',
+							ring: 'hsl(var(--ring))',
+							background: 'hsl(var(--background))',
+							foreground: 'hsl(var(--foreground))',
+							primary: {
+								DEFAULT: 'hsl(var(--primary))',
+								foreground: 'hsl(var(--primary-foreground))'
+							},
+							secondary: {
+								DEFAULT: 'hsl(var(--secondary))',
+								foreground: 'hsl(var(--secondary-foreground))'
+							},
+							destructive: {
+								DEFAULT: 'hsl(var(--destructive))',
+								foreground: 'hsl(var(--destructive-foreground))'
+							},
+							muted: {
+								DEFAULT: 'hsl(var(--muted))',
+								foreground: 'hsl(var(--muted-foreground))'
+							},
+							accent: {
+								DEFAULT: 'hsl(var(--accent))',
+								foreground: 'hsl(var(--accent-foreground))'
+							},
+							popover: {
+								DEFAULT: 'hsl(var(--popover))',
+								foreground: 'hsl(var(--popover-foreground))'
+							},
+							card: {
+								DEFAULT: 'hsl(var(--card))',
+								foreground: 'hsl(var(--card-foreground))'
+							},
+						},
+					}
+				}
+			}
+		</script>
+		<style type="text/tailwindcss">
+			@layer base {
+				:root {
+					--background: 0 0% 100%;
+--foreground: 240 10% 3.9%;
+--card: 0 0% 100%;
+--card-foreground: 240 10% 3.9%;
+--popover: 0 0% 100%;
+--popover-foreground: 240 10% 3.9%;
+--primary: 240 5.9% 10%;
+--primary-foreground: 0 0% 98%;
+--secondary: 240 4.8% 95.9%;
+--secondary-foreground: 240 5.9% 10%;
+--muted: 240 4.8% 95.9%;
+--muted-foreground: 240 3.8% 46.1%;
+--accent: 240 4.8% 95.9%;
+--accent-foreground: 240 5.9% 10%;
+--destructive: 0 84.2% 60.2%;
+--destructive-foreground: 0 0% 98%;
+--border: 240 5.9% 90%;
+--input: 240 5.9% 90%;
+--ring: 240 5.9% 10%;
+--radius: 0.5rem;
+				}
+				.dark {
+					--background: 240 10% 3.9%;
+--foreground: 0 0% 98%;
+--card: 240 10% 3.9%;
+--card-foreground: 0 0% 98%;
+--popover: 240 10% 3.9%;
+--popover-foreground: 0 0% 98%;
+--primary: 0 0% 98%;
+--primary-foreground: 240 5.9% 10%;
+--secondary: 240 3.7% 15.9%;
+--secondary-foreground: 0 0% 98%;
+--muted: 240 3.7% 15.9%;
+--muted-foreground: 240 5% 64.9%;
+--accent: 240 3.7% 15.9%;
+--accent-foreground: 0 0% 98%;
+--destructive: 0 62.8% 30.6%;
+--destructive-foreground: 0 0% 98%;
+--border: 240 3.7% 15.9%;
+--input: 240 3.7% 15.9%;
+--ring: 240 4.9% 83.9%;
+				}
+			}
+		</style>
+  </head>
+  <body>
+    <div class="flex flex-col md:flex-row">
+  <div class="flex-1 p-4 bg-card text-card-foreground">
+    <div class="grid grid-cols-5 gap-4 mb-4">
+      <div class="bg-blue-500 text-white p-4 rounded-lg text-center shadow-lg transform hover:scale-105 transition-transform">
+        <p class="text-2xl font-bold">{{nbrSalarie}}</p>
+        <p>Salariés</p>
+      </div>
+      <div class="bg-green-500 text-white p-4 rounded-lg text-center shadow-lg transform hover:scale-105 transition-transform">
+        <p class="text-2xl font-bold">{{nbrInscrit}}</p>
+        <p>Participés</p>
+      </div>
+      <div class="bg-red-500 text-white p-4 rounded-lg text-center shadow-lg transform hover:scale-105 transition-transform">
+        <p class="text-2xl font-bold">{{NbrModuleWithoutOgra}}</p>
+        <p>Modules sans Organismes</p>
+      </div>
+      <div class="bg-yellow-500 text-white p-4 rounded-lg text-center shadow-lg transform hover:scale-105 transition-transform">
+        <p class="text-2xl font-bold">{{totalCost}}</p>
+        <p>Coût réel (€)</p>
+      </div>
+    </div>
+
+    <div class="modal" tabindex="-1" role="dialog" *ngIf="planningForm" style="display: block;">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-body custom-modal-body">
+            <div class="max-w-md mx-auto p-6 bg-light rounded-lg shadow-md dark:bg-zinc-800">
+              <form (ngSubmit)="addMultiplePlanning()" class="space-y-4">
+                <h1 class="text-lg font-bold mb-4 text-center">Planning session</h1>
+                <div *ngFor="let planning of plannings; let i = index">
+                  <div>
+                    <label for="debut-{{i}}" class="block text-black">Début :</label>
+                    <input type="time" [(ngModel)]="planning.debut" [ngModelOptions]="{standalone: true}" id="debut-{{i}}" name="debut-{{i}}" class="block w-full px-3 py-2 mt-1 text-black border rounded-md focus:outline-none focus:ring-primary focus:border-primary" />
+                  </div>
+                  <div>
+                    <label for="fin-{{i}}" class="block text-black">Fin :</label>
+                    <input type="time" [(ngModel)]="planning.fin" [ngModelOptions]="{standalone: true}" id="fin-{{i}}" name="fin-{{i}}" class="block w-full px-3 py-2 mt-1 text-black border rounded-md focus:outline-none focus:ring-primary focus:border-primary" />
+                  </div>
+                  <div *ngIf="!isEveryday">
+                    <label for="jour-{{i}}" class="block text-black">Jour :</label>
+                    <select [(ngModel)]="planning.jour" [ngModelOptions]="{standalone: true}" id="jour-{{i}}" name="jour-{{i}}" class="block w-full px-3 py-2 mt-1 text-black border rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+                      <option *ngFor="let day of availableDays" [value]="day">{{ day }}</option>
+                    </select>
+                  </div>
+                  <button *ngIf="!isEveryday" type="button" (click)="removePlanning(i)" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 mt-2">Supprimer</button>
+                </div>
+                <div>
+                  <button *ngIf="!isEveryday" type="button" (click)="addPlanning()" class="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/80 mt-4">+</button>
+                </div>
+                <button type="submit" class="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/80 item">Ajouter plannings</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <h2 class="text-lg font-bold mb-4">Sessions de formation</h2>
+
+    <button (click)="openSessionAdd()" class="learn-more">
+      <span class="circle" aria-hidden="true">
+      <span class="icon arrow"></span>
+      </span>
+      <span class="button-text">Session</span>
+    </button>
+
+    <div  class="cards-container mt-2 ">
+      <div *ngIf="PlanningCard"  class="container">
+        <div class="infinite-moving-cards" >
+          <div class="card" *ngFor="let entry of planningEntries">
+            <button  class="close-button" (click)="CloseEntry()">×</button>
+
+            <blockquote>Planning</blockquote>
+            <p *ngIf="!CardJour">Jour: {{ entry.jour }}</p>
+            <small>Horaire: {{ entry.debut }} - {{ entry.fin }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-card">
+        <thead>
+          <tr>
+            <th class="px-4 py-2 border-b border-muted-foreground">Date début</th>
+            <th class="px-4 py-2 border-b border-muted-foreground">Date fin</th>
+            <th class="px-4 py-2 border-b border-muted-foreground">Statut session</th>
+            <th class="px-4 py-2 border-b border-muted-foreground">Salle</th>
+            <th class="px-4 py-2 border-b border-muted-foreground">Côut</th>
+            <th class="px-4 py-2 border-b border-muted-foreground">Places restantes</th>
+            <th class="px-4 py-2 border-b border-muted-foreground">Type du Planning</th>
+            <th class="px-4 py-2 border-b border-muted-foreground">Plus</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let session of sessions | paginate:{itemsPerPage:5,currentPage:p}; let i=index;" [ngClass]="{'odd': i % 2 == 0, 'even': i % 2 != 0,'selected': selectedSession === session}"
+          (dblclick)="selectSession(session)" >
+            <td class="px-4 py-2 border-b border-muted-foreground">{{ session.datedebut }}</td>
+            <td class="px-4 py-2 border-b border-muted-foreground">{{ session.datefin }}</td>
+            <td class="px-4 py-2 border-b border-muted-foreground">
+              <span [ngClass]="getStatusColor(session.statutSession)" class="inline-block w-3 h-3 rounded-full"></span>
+            </td>
+            <td class="px-4 py-2 border-b border-muted-foreground">{{ session.salle }}</td>
+            <td class="px-4 py-2 border-b border-muted-foreground">{{ session.cout }}</td>
+            <td class="px-4 py-2 border-b border-muted-foreground">{{ session.capacite }}</td>
+            <td class="px-4 py-2 border-b border-muted-foreground">{{ session.planningType }}</td>
+<td>
+
+
+  <div class="relative">
+    <button  (click)="toggleDropdown(i)" class="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-2 py-1 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+
+
+      <svg width="17px" height="17px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" class="bi bi-three-dots-vertical" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path> </g></svg>
+
+    </button>
+    <!-- Dropdown menu -->
+    <div [ngClass]="{'block': isDropdownOpen(i), 'hidden': !isDropdownOpen(i)}" class="absolute z-10 hidden bg-gray-500 divide-y divide-gray-100 rounded-lg shadow w-32 dark:bg-gray-700">
+      <ul class="py-2 text-xs text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+        <li>
+          <a (click)="OpenPresencePopUp(session)" class="block px-2 py-1 hover:bg-white dark:hover:bg-gray-600 dark:hover:text-white">Presence</a>
+        </li>
+        <li>
+          <a (click)="downloadExcel(session)" class="block px-2 py-1 hover:bg-white dark:hover:bg-gray-600 dark:hover:text-white">Excel</a>
+        </li>
+        <li>
+          <a (click)="openCardsGetPlanningEntriesBySessionId(session.id,session)" class="block px-2 py-1 hover:bg-white dark:hover:bg-gray-600 dark:hover:text-white">Planning</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</td>
+
+
+          </tr>
+        </tbody>
+      </table>
+      <pagination-controls class="myPagination" (pageChange)="p = $event"></pagination-controls>
+    </div>
+    <div class="flex justify-between items-center mt-4">
+      <div class="flex space-x-2">
+        <span class="inline-block w-3 h-3 bg-yellow-500 rounded-full"></span><span class="text-muted-foreground">Inscription</span>
+        <span class="inline-block w-3 h-3 bg-blue-500 rounded-full"></span><span class="text-muted-foreground">En cours</span>
+        <span class="inline-block w-3 h-3 bg-green-500 rounded-full"></span><span class="text-muted-foreground">Finie</span>
+        <span class="inline-block w-3 h-3 bg-red-500 rounded-full"></span><span class="text-muted-foreground">Annulée</span>
+        <span class="inline-block w-3 h-3 bg-black rounded-full"></span><span class="text-muted-foreground">Cloturée</span>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="sessionForum"  class="w-full md:w-1/3 p-4 text-bg-secondary text-black">
+    <h2 class="text-lg font-bold mb-4">Ajouter session</h2>
+    <button type="button" class="close" aria-label="Close" (click)="closeSessionAdd()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <form (ngSubmit)="addSession()">
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Max</label>
+        <input type="number" [(ngModel)]="newSession.capacite" [ngModelOptions]="{standalone: true}" class="w-full p-2 border border-input rounded" placeholder="Max">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Salle formation</label>
+        <input type="text" [(ngModel)]="newSession.salle" [ngModelOptions]="{standalone: true}" class="w-full p-2 border border-input rounded" placeholder="Mettez la salle">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Côut</label>
+        <input type="number" [(ngModel)]="newSession.cout" [ngModelOptions]="{standalone: true}" class="w-full p-2 border border-input rounded" placeholder="Côut de la Session">
+      </div>
+
+      <div *ngIf="inputStatuSession" class="mb-4">
+        <label class="block text-sm font-medium mb-1">Statut session</label>
+        <select [(ngModel)]="newSession.statutSession" [ngModelOptions]="{standalone: true}" name="statutSession" class="w-full p-2 border border-input rounded">
+          <option *ngFor="let status of statutSessions" [value]="status">{{ status }}</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label for="module">Module</label>
+        <select [(ngModel)]="newSession.module.id" [ngModelOptions]="{standalone: true}" (change)="onModuleChange($event)" class="w-full p-2 border border-input rounded" >
+          <option *ngFor="let module of modules" [value]="module.id">{{ module.matiere }}</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label for="organisme">Organisme</label>
+        <select [(ngModel)]="newSession.organisme.id" [ngModelOptions]="{standalone: true}" class="w-full p-2 border border-input rounded" [disabled]="organismeDropdownDisabled">
+          <option *ngFor="let organisme of organismes" [value]="organisme.id">{{ organisme.nomOrganisme }}</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Date Début</label>
+        <input type="date" [(ngModel)]="newSession.datedebut" [ngModelOptions]="{standalone: true}" class="w-full p-2 border border-input rounded" placeholder="25/01/2024 09:00 - 25/01/2024 17:00" (change)="updateAvailableDays()">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Date Fin</label>
+        <input type="date" [(ngModel)]="newSession.datefin" [ngModelOptions]="{standalone: true}" class="w-full p-2 border border-input rounded" placeholder="25/01/2024 09:00 - 25/01/2024 17:00" (change)="updateAvailableDays()">
+      </div>
+
+      <div *ngIf="showPlanningTypeDropdown" class="mb-4">
+        <label class="block text-sm font-medium mb-1">Type du Planning</label>
+        <select  [(ngModel)]="newSession.planningType" [ngModelOptions]="{standalone: true}" name="planningType" class="w-full p-2 border border-input rounded">
+          <option *ngFor="let type of planningTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+      <button type="submit" class="w-full bg-primary text-primary-foreground p-2 rounded" >Ajouter</button>
+    </form>
+  </div>
+</div>
+
+<div *ngIf="PresencePopUp" class="popup-overlay">
+  <div class="popup-content flex flex-col md:flex-row md:items-start">
+    <div class="popup-text md:flex-1 md:ml-4">
+
+      <h2 class="text">
+        Présence session {{clickedDate}}
+      </h2>
+      <ul class="mt-4">
+        <ng-container *ngIf="membersList.length > 0; else noMembers">
+          <ng-container *ngFor="let membre of membersList; let i = index">
+            <li class="flex items-center mb-3 p-2 bg-accent rounded-lg hover:bg-accent/80 transition">
+              <img class="w-8 h-8 rounded-full mr-2" src="../../../../assets/images/wired-outline-21-avatar.gif" />
+              <span class="font-semibol">{{ UsersList[i].username}}</span>
+               <span>
+                  <button  (click)="openUserPresencePopUp(membre.id)"
+                  class="select-none rounded-lg bg-amber-500 py-3 px-6 text-center align-middle font-sans text-xs font-bold uppercase text-black shadow-md shadow-amber-500/20 transition-all hover:shadow-lg hover:shadow-amber-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                  type="button"
+                >
+                  Présence
+                </button>
+               </span>
+              <div *ngIf="UserPresencePopUp" class="popup-overlay">
+                <div class="popup-content flex flex-col md:flex-row md:items-start">
+                  <div class="popup-text md:flex-1 md:ml-4">
+                    <h2 class="text">
+                      Les dates de planning correspondants à la session
+                    </h2>
+                    <ul class="mt-4">
+                        <ng-container *ngFor="let date of userDatesSession; let i = index">
+                          <li class="flex items-center mb-3 p-2 bg-accent rounded-lg hover:bg-accent/80 transition">
+                            <img class="w-8 h-8 rounded-full mr-2" src="../../../../assets/images/wired-outline-21-avatar.gif" />
+                            <span class="font-semibol">{{ date }}</span>
+                            <div class="ml-4">
+                              <form class="max-w-sm mx-auto">
+                                <label for="presence-{{i}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Présence</label>
+                                <select (change)="togglePresence($event,membre.id,date)" id="presence-{{i}}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        >
+                                  <option [ngValue]="null" >Choisir état</option>
+                                  <option value="true">Présent</option>
+                                  <option value="false">Absent</option>
+                                </select>
+                              </form>
+                            </div>
+                          </li>
+                        </ng-container>
+                    </ul>
+                  </div>
+                  <button class="close-btn" (click)="closeUserPresencePopUp()">X</button>
+                </div>
+              </div>
+            </li>
+          </ng-container>
+        </ng-container>
+        <ng-template #noMembers>
+          <li class="text-center p-2">
+            Pas de membre inscrit
+          </li>
+        </ng-template>
+      </ul>
+    </div>
+    <button class="close-btn" (click)="closePopUpPresence()">X</button>
+  </div>
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ton profile</title>
+  <link rel="stylesheet" href="button.component.scss">
+</head>
+<body>
+  <div class="card">
+    <h2>Voici vos cordoonées</h2>
+
+    <form [formGroup]="passwordForm" (ngSubmit)="updateUser()">
+      <input type="text" placeholder="Nom" formControlName="lastname"  required readonly>
+      <input  type="text" placeholder="Prénom" formControlName="firstname"  required readonly>
+      <input type="text" placeholder="Email" formControlName="username" required readonly>
+      <input type="password" placeholder="Mot de passe" formControlName="password" required>
+      <button type="submit" [disabled]="!passwordForm.valid">Confirmer</button>
+    </form>
+    <div *ngIf="passwordForm.get('password')?.invalid && passwordForm.get('password')?.touched">
+      <p *ngIf="passwordForm?.get('password')?.errors?.['required']">Le mot de passe est requis.</p>
+      <p *ngIf="passwordForm.get('password')?.errors?.['minlength']">Le mot de passe doit contenir au moins 8 caractères.</p>
+      <p *ngIf="passwordForm.get('password')?.errors?.['pattern']">Le mot de passe doit contenir au moins un chiffre et une lettre.</p>
+      <p *ngIf="passwordForm.get('password')?.errors?.['whitespace']">Le mot de passe ne doit pas contenir d'espaces.</p>
+    </div>
+
+  </div>
+</body>
+</html>

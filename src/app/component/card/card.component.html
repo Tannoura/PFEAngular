@@ -1,0 +1,77 @@
+
+    <div class="calendar-controls">
+      <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" (click)="switchToDayView()">Par jour</button>
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" (click)="switchToMonthView()">Par Semaine</button>
+      <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" (click)="switchToWeekView()">Par Mois</button>
+    </div>
+    <full-calendar *ngIf="calendarVisible" #calendar [options]="calendarOptions"></full-calendar>
+
+    <div *ngIf="popupUserListBySession&&calendarVisible" class="popup-overlay">
+      <div class="popup-content flex flex-col md:flex-row md:items-start">
+        <div class="popup-text md:flex-1 md:ml-4">
+          <h2 class="text">
+            Participant de cette session
+          </h2>
+          <ul class="mt-4">
+              <ng-container *ngFor="let user of UsersList; let i = index ">
+                <li class="flex items-center mb-3 p-2 bg-accent rounded-lg hover:bg-accent/80 transition">
+                  <img  class="w-8 h-8 rounded-full mr-2" src="../../../../assets/images/wired-outline-21-avatar.gif" />
+                  <span  class="font-semibol">{{user.username}}</span>
+                  <span  class="font-semibol">
+                    <button (click)="openPresenceTimeLine(user,TimeLineSession) "  type="button" class="px-2 py-1 text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-medium rounded-lg text-sm  text-center me-2 mb-2">Voir Présence</button>
+                  </span>
+                </li>
+              </ng-container>
+          </ul>
+        </div>
+        <button class="close-btn" (click)="closePopupUsersList()">X</button>
+      </div>
+    </div>
+
+
+<div *ngIf="userPresentOrNot" class="bg-green-200 min-h-screen rounded-lg">
+  <div class="p-4 mt-4">
+<button (click)="BackoCalendar()" class="cursor-pointer duration-200 hover:scale-125 active:scale-100" title="Go Back">
+  <svg xmlns="http://www.w3.org/2000/svg" width="50px" height="50px" viewBox="0 0 24 24" class="stroke-blue-300">
+    <path stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" d="M11 6L5 12M5 12L11 18M5 12H19"></path>
+  </svg>
+</button>
+    <h1 class="text-4xl text-center font-bold mb-6 italic">Jours de présence</h1>
+    <div class="container">
+      <div class="flex flex-col md:grid grid-cols-12 text-gray-50">
+        <div *ngFor="let date of PresenceListBySessionAndUser" class="flex md:contents">
+          <!-- Barre verticale -->
+          <div class="col-start-2 col-end-4 mr-10 md:mx-auto relative">
+            <div class="h-full w-6 flex items-center justify-center">
+              <div class="h-full w-1" [ngClass]="getPresenceClass(date)"></div>
+            </div>
+            <div class="w-6 h-6 absolute top-1/2 -mt-3 rounded-full" [ngClass]="getPresenceClass(date)">
+              <i *ngIf="date.present" class="fas fa-check-circle text-white"></i>
+            </div>
+          </div>
+
+          <!-- Contenu de la présence -->
+          <div class="bg-green-500 col-start-4 col-end-12 p-4 rounded-xl my-4 mr-auto shadow-md w-full" [ngClass]="getPresenceClass(date)">
+            <h3 class="font-semibold text-lg mb-1" [ngClass]="date.present ? '' : 'text-gray-50'">{{ getPresenceTitle(date) }}</h3>
+            <p class="leading-tight text-justify">
+              {{ getPresenceMessage(date) || date.jour }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

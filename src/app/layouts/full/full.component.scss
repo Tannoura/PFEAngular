@@ -1,0 +1,16 @@
+.max-width {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+img
+{
+  cursor: pointer;
+  filter: grayscale(100%);
+  transition: 0.5s;
+margin-left: 15px;}
+
+img:hover
+{
+  filter: grayscale(0%);
+}

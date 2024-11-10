@@ -1,0 +1,282 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="p-3">
+        <h4 class="card-title mb-0">Les modules et organismes</h4>
+        <h1>    </h1>
+
+      <button *ngIf="auth.isAdmin()" (click)="goToAddModuleAndOrganisme()" class="cta">
+        <span class="hover-underline-animation"> Ajouter </span>
+        <svg
+          id="arrow-horizontal"
+          xmlns="http://www.w3.org/2000/svg"
+          width="30"
+          height="10"
+          viewBox="0 0 46 16"
+        >
+          <path
+            id="Path_10"
+            data-name="Path 10"
+            d="M8,0,6.545,1.455l5.506,5.506H-30V9.039H12.052L6.545,14.545,8,16l8-8Z"
+            transform="translate(30)"
+          ></path>
+        </svg>
+      </button>
+      </div>
+
+
+
+      <div class="card-body border-top">
+
+        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+          <li *ngIf="auth.isAdmin()" [ngbNavItem]="1">
+            <button ngbNavLink>Les modules</button>
+            <ng-template ngbNavContent>
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-nowrap">
+                          <thead>
+                            <tr>
+                              <th class="text-dark font-medium fs-4">Nom</th>
+                              <th class="text-dark font-medium fs-4">Durée</th>
+                              <th class="text-dark font-medium fs-4">Prix</th>
+                              <th class="text-dark font-medium fs-4">Voir organismes associés</th>
+
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngIf="modules.length === 0">
+                              <td colspan="5">Tableau des modules vide</td>
+                            </tr>
+                            <tr *ngFor="let module of modules; let i=index;" [ngClass]="{'odd': i % 2 == 0, 'even': i % 2 != 0}">
+                              <td>{{ module.matiere }}</td>
+                              <td>{{ module.duree }}</td>
+                              <td>{{ module.prix }}</td>
+                              <button class="btn btn-success" (click)="ShowOrganismesForModule(module.id)">
+                                organismes
+                               </button>
+                               <button (click)="deleteModule(module.id)" class="delete">Supprimer</button>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </li>
+          <li *ngIf="auth.isAdmin()" [ngbNavItem]="2">
+            <button ngbNavLink>Les organismes</button>
+            <ng-template ngbNavContent>
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-nowrap">
+                          <thead>
+                            <tr>
+                              <th class="text-dark font-medium fs-4">Nom organisme</th>
+                              <th class="text-dark font-medium fs-4">Adresse organisme</th>
+                              <th class="text-dark font-medium fs-4">Numéro organisme</th>
+                              <th class="text-dark font-medium fs-4">Logo</th>
+                              <th class="text-dark font-medium fs-4">Gérer</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngIf="organismes.length === 0">
+                            <td colspan="5">Tableau des organismes vide</td>
+                          </tr>
+                            <tr *ngFor="let organisme of organismes; let i=index;" [ngClass]="{'odd': i % 2 == 0, 'even': i % 2 != 0}">
+                              <td>{{ organisme.nomOrganisme }}</td>
+                              <td>{{ organisme.adresseOrganisme }}</td>
+                              <td>{{ organisme.numeroOrganisme }}</td>
+                              <td><img *ngIf="getOrganismeImage(organisme)"
+                                [src]="getOrganismeImage(organisme)?.imageUrl" alt="Organisme Image"  class="small-image">
+                              </td>
+
+                              <td>
+                                <button class="button" (click)="ShowModulesForOrganisme(organisme.id)">
+                                  <svg fill="currentColor" viewBox="0 0 24 24" class="icon">
+                                    <path clip-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" fill-rule="evenodd"></path>
+                                  </svg>
+                                </button>
+
+                                <button class="cssbuttons-io-button" (click)="AddModulesForOrganismePopUp(organisme.id)">
+                                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path fill="none" d="M0 0h24v24H0z"></path><path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path></svg>
+                                </button>
+
+
+
+                                <button (click)="deleteOrganisme(organisme.id)" class="deleteButton">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 50 59"
+                                    class="bin"
+                                  >
+                                    <path
+                                      fill="#B5BAC1"
+                                      d="M0 7.5C0 5.01472 2.01472 3 4.5 3H45.5C47.9853 3 50 5.01472 50 7.5V7.5C50 8.32843 49.3284 9 48.5 9H1.5C0.671571 9 0 8.32843 0 7.5V7.5Z"
+                                    ></path>
+                                    <path
+                                      fill="#B5BAC1"
+                                      d="M17 3C17 1.34315 18.3431 0 20 0H29.3125C30.9694 0 32.3125 1.34315 32.3125 3V3H17V3Z"
+                                    ></path>
+                                    <path
+                                      fill="#B5BAC1"
+                                      d="M2.18565 18.0974C2.08466 15.821 3.903 13.9202 6.18172 13.9202H43.8189C46.0976 13.9202 47.916 15.821 47.815 18.0975L46.1699 55.1775C46.0751 57.3155 44.314 59.0002 42.1739 59.0002H7.8268C5.68661 59.0002 3.92559 57.3155 3.83073 55.1775L2.18565 18.0974ZM18.0003 49.5402C16.6196 49.5402 15.5003 48.4209 15.5003 47.0402V24.9602C15.5003 23.5795 16.6196 22.4602 18.0003 22.4602C19.381 22.4602 20.5003 23.5795 20.5003 24.9602V47.0402C20.5003 48.4209 19.381 49.5402 18.0003 49.5402ZM29.5003 47.0402C29.5003 48.4209 30.6196 49.5402 32.0003 49.5402C33.381 49.5402 34.5003 48.4209 34.5003 47.0402V24.9602C34.5003 23.5795 33.381 22.4602 32.0003 22.4602C30.6196 22.4602 29.5003 23.5795 29.5003 24.9602V47.0402Z"
+                                      clip-rule="evenodd"
+                                      fill-rule="evenodd"
+                                    ></path>
+                                    <path fill="#B5BAC1" d="M2 13H48L47.6742 21.28H2.32031L2 13Z"></path>
+                                  </svg>
+
+                                  <span class="tooltip">Delete</span>
+                                </button>
+
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </li>
+          <li *ngIf="auth.isSalarie()" [ngbNavItem]="3">
+            <button ngbNavLink>Les modules selon votre poste</button>
+            <ng-template ngbNavContent>
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-nowrap">
+                          <thead>
+                            <tr>
+                              <th class="text-dark font-medium fs-4">Matière</th>
+                              <th class="text-dark font-medium fs-4">Durée</th>
+                              <th class="text-dark font-medium fs-4">Prix</th>
+                              <th class="text-dark font-medium fs-4">Actions</th>
+
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngIf="modulesSalarie.length === 0">
+                              <td colspan="4">Tableau des spécialités vide</td>
+                            </tr>
+                            <tr *ngFor="let module of modulesSalarie; let i=index;" [ngClass]="{'odd': i % 2 == 0, 'even': i % 2 != 0}">
+                              <td>{{ module.matiere }}</td>
+                              <td>{{ module.duree }}</td>
+                              <td>{{ module.prix }}</td>
+                              <td>
+                                <button (click)="sendIdModuleToSalarieSession(module.id)" class="btn-17">
+                                <span class="text-container">
+                                  <span class="text">Sessions</span>
+                                </span>
+                                </button>
+
+
+                              </td>
+                            </tr>
+
+
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </li>
+        </ul>
+        <div [ngbNavOutlet]="nav" class="mt-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--PopUp pour GetModulesByOrganismeId-->
+  <div *ngIf="isShowModulePopup" class="popup-container">
+    <div class="popup-content">
+      <h2>Les Modules associé à cette organisme</h2>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th >Nom</th>
+            <th>Prix</th>
+            <th>Durée</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="modulesOrganisme.length === 0">
+            <td colspan="4">Tableau des modules vide</td>
+          </tr>
+          <tr *ngFor="let module of modulesOrganisme; let i=index;" [ngClass]="{'odd': i % 2 == 0, 'even': i % 2 != 0}">
+            <td>{{ module.matiere }}</td>
+            <td>{{ module.prix }}</td>
+            <td>{{ module.duree }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="close-button" (click)="closeShowModulePopup()">Fermer</button>
+    </div>
+  </div>
+
+  <!--PopUp pour Ajouter Module à Organisme-->
+  <div *ngIf="isAddModulePopup" class="popup-container">
+    <div class="popup-content">
+      <h2>Ajouter un module à cet organisme</h2>
+
+      <form (ngSubmit)="addModuleToOrganisme()">
+        <div class="form-group">
+          <label for="moduleSelect">Sélectionner un module:</label>
+          <div></div>
+          <select id="moduleSelect" [(ngModel)]="selectedModuleId" name="module" class="form-control" required>
+            <option [value]="null">Sélectionner un module</option>
+            <option *ngFor="let module of modules" [value]="module.id">{{ module.matiere }}</option>
+          </select>
+        </div>
+        <h1></h1>
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+      </form>
+      <button class="close-button" (click)="closeAddModulesPopup()">Fermer</button>
+    </div>
+  </div>
+
+<!--PopUp pour GetOrganismeByModuleId-->
+<div *ngIf="isShowOrganismePopup" class="popup-container">
+  <div class="popup-content">
+    <h2>Les Organismes associés à ce module</h2>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th class="text-dark font-medium fs-4">Nom organisme</th>
+          <th class="text-dark font-medium fs-4">Adresse organisme</th>
+          <th class="text-dark font-medium fs-4">Numéro organisme</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr *ngIf="organismesModules.length === 0">
+          <td colspan="4">Tableau des organismes vide</td>
+        </tr>
+        <tr *ngFor="let organisme of organismesModules; let i=index;" [ngClass]="{'odd': i % 2 == 0, 'even': i % 2 != 0}">
+
+          <td>{{ organisme.nomOrganisme }}</td>
+          <td>{{ organisme.adresseOrganisme }}</td>
+          <td>{{ organisme.numeroOrganisme }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="close-button" (click)="closeShowOrganismesForModulePopup()">Fermer</button>
+  </div>
+</div>

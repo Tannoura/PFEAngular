@@ -1,0 +1,106 @@
+<div *ngIf="PlanningCard" class="cart">
+  <div class="tools">
+    <div class="circle">
+      <span (click)="CloseEntry()" class="red box"></span>
+    </div>
+    <div class="circle">
+      <span class="yellow box"></span>
+    </div>
+    <div class="circle">
+      <span class="green box"></span>
+    </div>
+  </div>
+  <div class="card__content">
+    <div *ngIf="CardJour" class="card__details">
+      <h2>Planning Quotidien</h2>
+     <ul>
+        <li *ngFor="let entry of planningEntries">
+        <p>La session se déroule tous les jours dans la période de session</p>
+        <p>Début: {{ entry.debut }}</p>
+        <p>Fin: {{ entry.fin }}</p>
+        </li>
+     </ul>
+    </div>
+    <div *ngIf="!CardJour" class="card__details">
+      <h2>Planning</h2>
+      <ul>
+        <li *ngFor="let entry of planningEntries">
+          <p>Jour: {{ entry.jour }}</p>
+          <p>Début: {{ entry.debut }}</p>
+          <p>Fin: {{ entry.fin }}</p>
+        </li>
+      </ul>
+    </div>
+    </div>
+</div>
+
+
+<div class="card">
+  <div class="card-body">
+              <h4 class="card-title">Les sessions</h4>
+              <h5 class="card-subtitle">liées au module {{nomModule}}</h5>
+              <div class="loading" *ngIf="loading">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+      <div *ngIf="!loading" class="table-responsive">
+          <table class="table align-middle">
+              <thead>
+                  <tr>
+                      <th class="text-dark font-medium fs-4">Salle
+                        <img src="../../../assets/images/wired-outline-18-location-pin.gif" alt="Icon" style="width: 24px; height: 24px; margin-left: 1px;">
+
+                      </th>
+                      <th class="text-dark font-medium fs-4">Organisme
+                        <img src="../../../assets/images/wired-outline-27-globe.gif" alt="Icon" style="width: 24px; height: 24px; margin-left: 1px;">
+
+                      </th>
+                      <th class="text-dark font-medium fs-4">
+                        Date Début
+                        <img src="../../../assets/images/wired-outline-45-clock-time.gif" alt="Icon" style="width: 24px; height: 24px; margin-left: 1px;">
+
+                      </th>
+                      <th class="text-dark font-medium fs-4">Date Fin
+                        <img src="../../../assets/images/wired-outline-45-clock-time.gif" alt="Icon" style="width: 24px; height: 24px; margin-left: 1px;">
+
+                      </th>
+
+                      <th class="text-dark font-medium fs-4"> Action
+                        <img src="../../../assets/images/wired-outline-19-magnifier-zoom-search.gif" alt="Icon" style="width: 24px; height: 24px; margin-left: 1px;">
+
+                      </th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor='let session of sessions'>
+                      <td>
+                          <div class="d-flex align-items-center">{{session.salle}}</div>
+                      </td>
+                      <td class="fs-4">{{session.organisme.nomOrganisme}}</td>
+                      <td> {{session.datedebut}}</td>
+                      <td> {{session.datefin}} </td>
+                      <td><button (click)="openCardsGetPlanningEntriesBySessionId(session.id,session)" class="button2">Planning</button>
+
+                        <button *ngIf="!membershipStatuses[session.id] && isSessionInInscription(session)" (click)="ajouterMembre(userId,session)" class="bg-blue-200 hover:bg-blue-400 text-black font-bold py-3 px-6 rounded-full shadow-lg shadow-neutral-950 hover:text-white transform transition-all duration-500 ease-in-out hover:scale-110 hover:brightness-110 hover:animate-pulse active:animate-bounce">
+                          Participer
+                        </button>
+
+
+
+                          <button *ngIf="membershipStatuses[session.id] && isSessionInInscription(session)" (click)="supprimerMembreByUserSessionIds(userId,session)" class="cursor-pointer inline-flex items-center rounded-full px-9 py-3 text-xl font-mono font-semibold text-rose-600 hover:text-white border-2 border-rose-600
+                          hover:bg-rose-600 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-75 hover:bg-rose-600 duration-300  focus:bg-transparent">
+                            Annuler
+                          </button>
+                      </td>
+                  </tr>
+                   <div *ngIf="sessions.length === 0">
+                    <p>Aucune session pour ton poste</p>
+                  </div>
+              </tbody>
+          </table>
+      </div>
+  </div>
+</div>
